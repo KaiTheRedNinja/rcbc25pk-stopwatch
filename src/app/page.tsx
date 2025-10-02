@@ -6,7 +6,7 @@ import { Timer, Play, Pause, RotateCcw } from 'lucide-react';
 export default function StopwatchPoints() {
   const [time, setTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
-  const intervalRef = useRef(null);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (isRunning) {
@@ -25,7 +25,7 @@ export default function StopwatchPoints() {
     };
   }, [isRunning]);
 
-  const getPoints = (milliseconds) => {
+  const getPoints = (milliseconds: number) => {
     const seconds = milliseconds / 1000;
     if (seconds < 1) return 25;
     if (seconds < 2) return 18;
@@ -40,7 +40,7 @@ export default function StopwatchPoints() {
     return 0;
   };
 
-  const formatTime = (milliseconds) => {
+  const formatTime = (milliseconds: number) => {
     const ms = Math.floor((milliseconds % 1000) / 10);
     const secs = Math.floor((milliseconds / 1000) % 60);
     const mins = Math.floor((milliseconds / 60000) % 60);
