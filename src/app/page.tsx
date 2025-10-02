@@ -1,103 +1,136 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useState, useEffect, useRef } from 'react';
+import { Timer, Play, Pause, RotateCcw } from 'lucide-react';
+
+export default function StopwatchPoints() {
+  const [time, setTime] = useState(0);
+  const [isRunning, setIsRunning] = useState(false);
+  const intervalRef = useRef(null);
+
+  useEffect(() => {
+    if (isRunning) {
+      intervalRef.current = setInterval(() => {
+        setTime(t => t + 10);
+      }, 10);
+    } else {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    }
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [isRunning]);
+
+  const getPoints = (milliseconds) => {
+    const seconds = milliseconds / 1000;
+    if (seconds < 1) return 25;
+    if (seconds < 2) return 18;
+    if (seconds < 3) return 15;
+    if (seconds < 4) return 12;
+    if (seconds < 5) return 10;
+    if (seconds < 6) return 8;
+    if (seconds < 7) return 6;
+    if (seconds < 8) return 4;
+    if (seconds < 9) return 2;
+    if (seconds < 10) return 1;
+    return 0;
+  };
+
+  const formatTime = (milliseconds) => {
+    const ms = Math.floor((milliseconds % 1000) / 10);
+    const secs = Math.floor((milliseconds / 1000) % 60);
+    const mins = Math.floor((milliseconds / 60000) % 60);
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}.${ms.toString().padStart(2, '0')}`;
+  };
+
+  const handleStartPause = () => {
+    setIsRunning(!isRunning);
+  };
+
+  const handleReset = () => {
+    setIsRunning(false);
+    setTime(0);
+  };
+
+  const points = getPoints(time);
+  const getPointsColor = () => {
+    if (points >= 18) return 'text-green-500';
+    if (points >= 10) return 'text-yellow-500';
+    if (points >= 4) return 'text-orange-500';
+    return 'text-red-500';
+  };
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4">
+      <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 shadow-2xl border border-white/20 max-w-md w-full">
+        <div className="flex items-center justify-center gap-2 mb-8">
+          <Timer className="w-8 h-8 text-purple-300" />
+          <h1 className="text-3xl font-bold text-white">Stopwatch</h1>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+        <div className="bg-black/30 rounded-2xl p-8 mb-6">
+          <div className="text-center mb-6">
+            <div className="text-6xl font-mono font-bold text-white mb-2">
+              {formatTime(time)}
+            </div>
+          </div>
+
+          <div className="text-center">
+            <div className="text-sm text-purple-300 mb-1">Points</div>
+            <div className={`text-7xl font-bold ${getPointsColor()} transition-colors duration-300`}>
+              {points}
+            </div>
+          </div>
+        </div>
+
+        <div className="flex gap-4 justify-center">
+          <button
+            onClick={handleStartPause}
+            className="flex items-center gap-2 bg-purple-500 hover:bg-purple-600 text-white font-semibold px-8 py-4 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+          >
+            {isRunning ? (
+              <>
+                <Pause className="w-5 h-5" />
+                Pause
+              </>
+            ) : (
+              <>
+                <Play className="w-5 h-5" />
+                Start
+              </>
+            )}
+          </button>
+
+          <button
+            onClick={handleReset}
+            className="flex items-center gap-2 bg-slate-600 hover:bg-slate-700 text-white font-semibold px-8 py-4 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+          >
+            <RotateCcw className="w-5 h-5" />
+            Reset
+          </button>
+        </div>
+
+        <div className="mt-6 bg-black/20 rounded-xl p-4">
+          <div className="text-xs text-purple-200 font-semibold mb-2">Points Table:</div>
+          <div className="grid grid-cols-2 gap-2 text-xs text-white/80">
+            <div>&lt;1s: 25pt</div>
+            <div>1-2s: 18pt</div>
+            <div>2-3s: 15pt</div>
+            <div>3-4s: 12pt</div>
+            <div>4-5s: 10pt</div>
+            <div>5-6s: 8pt</div>
+            <div>6-7s: 6pt</div>
+            <div>7-8s: 4pt</div>
+            <div>8-9s: 2pt</div>
+            <div>9-10s: 1pt</div>
+            <div className="col-span-2">&gt;10s: 0pt</div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
