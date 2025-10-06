@@ -58,14 +58,14 @@ export default function F1Stopwatch() {
     const seconds = milliseconds / 1000;
     if (seconds < 1) return 25;
     if (seconds < 2) return 18;
-    if (seconds < 3) return 15;
-    if (seconds < 4) return 12;
-    if (seconds < 5) return 10;
-    if (seconds < 6) return 8;
-    if (seconds < 7) return 6;
-    if (seconds < 8) return 4;
-    if (seconds < 9) return 2;
-    if (seconds < 10) return 1;
+    if (seconds < 4) return 15;
+    if (seconds < 6) return 12;
+    if (seconds < 8) return 10;
+    if (seconds < 10) return 8;
+    if (seconds < 12) return 6;
+    if (seconds < 15) return 4;
+    if (seconds < 18) return 2;
+    if (seconds < 25) return 1;
     return 0;
   };
 
